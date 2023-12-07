@@ -1,291 +1,184 @@
-#include <fstream>
 #include <iostream>
-#include <sstream>
+#include <fstream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
-#ifdef _WIN32
-// Comando para limpar tela no Windows
-const string limparTelaCmd = "cls";
-// Códigos ANSI para cores no Windows
-const string corVermelha = "";
-const string corVerde = "";
-const string corRosa = "";
-const string corAzul = "";
-#else
-// Comando para limpar tela em sistemas Unix (Linux, macOS)
-const string limparTelaCmd = "clear";
-// Códigos ANSI para cores em sistemas Unix
-const string corVermelha = "\033[1;31m";
-const string corVerde = "\033[1;32m";
-const string corRosa = "\033[1;35m";
-const string corAzul = "\033[1;34m";
-#endif
-
-struct Jogo {
-  int id_jogo;
-  string nome;
-  double preco;
-};
-
-struct Usuario {
-  string nome;
-  string senha;
-  vector<Jogo> jogosComprados;
-  double saldo;
-};
-
-class BibliotecaJogos {
+class Jogo { // estrutura de jogo
 private:
-  vector<Jogo> jogosDisponiveis;
-  vector<Usuario> usuarios; // Correção: Declarar vetor de usuarios
-
-  const string arquivoUsuarios = "usuarios.txt";
+    int id_jogo;
+    string nome;
+    double preco;
 
 public:
-  Usuario usuarioLogado;
+    Jogo(int _id, string _nome, double _preco) : id_jogo(_id), nome(_nome), preco(_preco) {}
 
-  BibliotecaJogos() {
-    jogosDisponiveis.push_back({1, "The Witcher 3", 199.99});
-    jogosDisponiveis.push_back({2, "Cyberpunk 2077", 207.70});
-    jogosDisponiveis.push_back({3, "Assassin's Creed Valhalla", 299.99});
-  }
-  void mensagemColorida(const string &mensagem, const string &cor) const {
-    cout << cor << mensagem << "\033[0m" << endl;
-  }
-
-  void listarJogosDisponiveis() const {
-    mensagemColorida("\n\n❑ Jogos Disponíveis ❑\n", corVerde);
-    for (const auto &jogo : jogosDisponiveis) {
-      cout << " " << jogo.id_jogo << " - " << jogo.nome << " (R$" << jogo.preco
-           << ")" << endl;
-    }
-  }
-
-  void fazerLogin(const string &usuario, const string &senha) {
-    for (auto &u : usuarios) {
-      if (u.nome == usuario && u.senha == senha) {
-        usuarioLogado = u;
-        mensagemColorida("Bem-vindo, " + u.nome + "!", corVerde);
-        return;
-      }
-    }
-    mensagemColorida("Usuário ou senha incorretos.", corVermelha);
-  }
-
-  void cadastrarUsuario(const string &usuario, const string &senha) {
-    Usuario novoUsuario = {usuario, senha, {}, 0.0};
-    usuarios.push_back(novoUsuario);
-    mensagemColorida("Usuário cadastrado com sucesso.", corVerde);
-  }
-
-  void comprarJogo(const int &idjogo) {
-    for (const auto &jogo : jogosDisponiveis) {
-      if (jogo.id_jogo == idjogo) {
-        if (usuarioLogado.saldo >= jogo.preco) {
-          usuarioLogado.jogosComprados.push_back(jogo);
-          usuarioLogado.saldo -= jogo.preco;
-          mensagemColorida(corVerde + "Compra realizada com sucesso!\n" +
-                               corAzul + "⇩" + jogo.nome +
-                               " adicionado à sua biblioteca⇩" + corAzul,
-                           corVerde);
-        } else {
-          mensagemColorida("Saldo insuficiente para comprar " + jogo.nome + ".",
-                           corVermelha);
-        }
-        return;
-      }
-    }
-    mensagemColorida("Jogo não encontrado.", corVermelha);
-  }
-
-  void listarJogosComprados() const {
-    mensagemColorida("Jogos Comprados por " + usuarioLogado.nome + ":",
-                     corVerde);
-    for (const auto &jogo : usuarioLogado.jogosComprados) {
-      cout << " " << jogo.id_jogo << " - " << jogo.nome << " (R$" << jogo.preco
-           << ")" << endl;
-    }
-  }
-
-  void carregarUsuarios() {
-    ifstream arquivo(arquivoUsuarios);
-
-    if (!arquivo.is_open()) {
-      // Se o arquivo não existir, não há usuários para carregar
-      return;
-    }
-
-    usuarios.clear();
-
-    string linha;
-    while (getline(arquivo, linha)) {
-      stringstream ss(linha);
-      string nome, senha;
-      double saldo;
-
-      ss >> nome >> senha >> saldo;
-
-      Usuario novoUsuario = {nome, senha, {}, saldo};
-      usuarios.push_back(novoUsuario);
-    }
-
-    arquivo.close();
-  }
-
-  void salvarUsuarios() const {
-    ofstream arquivo(arquivoUsuarios);
-
-    for (const auto &u : usuarios) {
-      arquivo << u.nome << " " << u.senha << " " << u.saldo << endl;
-    }
-
-    arquivo.close();
-  }
-
-  void depositarSaldo(double valor) {
-    if (valor > 0) {
-      usuarioLogado.saldo += valor;
-      mensagemColorida("Depósito de R$" + to_string(valor) +
-                           " realizado com sucesso. Novo saldo: R$" +
-                           to_string(usuarioLogado.saldo),
-                       corVerde);
-    } else {
-      mensagemColorida("Valor de depósito inválido.", corVermelha);
-    }
-  }
-  ~BibliotecaJogos() { salvarUsuarios(); }
+    int getId() const { return id_jogo; } // mostra id do jogp
+    string getNome() const { return nome; } // mostra o nome do jogo
+    double getPreco() const { return preco; } // mostra o preço do jogo
 };
 
-void imprimirMoldura(int largura) {
-  for (int i = 0; i < largura; ++i) {
-    cout << "\033[1;33m▉\033[0m";
-  }
-  cout << endl;
+class Conta {  //estrutura de conta
+private:
+    string nome;
+    string senha;
+    double saldo;
+
+public:
+    Conta(string _nome, string _senha) : nome(_nome), senha(_senha), saldo(0.0) {}
+
+    string getNome() const { return nome; } //função para mostrar nome
+
+    bool validarSenha(const string& _senha) const { //função para validar senha digitada
+      return senha == _senha;
+    }
+
+    void depositar(double valor) { // função para depositar
+        saldo += valor;
+        cout << "Valor depositado com sucesso!" << endl;
+    }
+
+    double getSaldo() const { return saldo; } //Mostrar saldo
+
+    void debitar(double valor) { // função para debitar na hora de comprar o jogo
+        saldo -= valor;
+    }
+};
+
+void cadastrarConta(vector<Conta>& contas) { //acessa o vetor conta e define como contas
+    string nome, senha;
+    cout << "Criar uma nova conta:" << endl;
+    cout << "Nome de usuario: ";
+    cin >> nome;
+    cout << "Senha: ";
+    cin >> senha;
+
+    contas.push_back(Conta(nome, senha)); // push_back puxa para a ultima posicao do vetor
+    cout << "Conta criada com sucesso!" << endl;
 }
 
-void menuComprarJogo(BibliotecaJogos &biblioteca, string &usuario) {
-  while (true) {
-    cout << "\n";
-    imprimirMoldura(50);
+Conta* fazerLogin(vector<Conta>& contas) { // acessa o vetor conta e define como contas
+    string nome, senha;
+    cout << "Fazer login:" << endl;
+    cout << "Nome de usuario: ";
+    cin >> nome;
+    cout << "Senha: ";
+    cin >> senha;
 
-    cout << "\033[1;33m▉\033[0m\033[1;36m ▰▰▰▰▰▰▰▰▰▰▰▰ Menu de Compras "
-            "▰▰▰▰▰▰▰▰▰▰▰▰▰\t\t\033[0m\033[1;33m▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 1.\033[0m Comprar "
-            "Jogo\033[1;33m\t\t\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 2.\033[0m Lista Jogos "
-            "Comprados\033[1;33m\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 3.\033[0m Adicionar "
-            "Créditos\033[1;33m\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 4.\033[0m Voltar ao Menu "
-            "Principal\033[1;33m\t\t\t\t\t ▉\033[0m\n";
-
-    imprimirMoldura(50);
-
-    int opcao;
-    cout << "\n\033[1;37mEscolha uma opção: \033[0m";
-    cin >> opcao;
-
-    switch (opcao) {
-    case 1: {
-      int idjogo;
-      cout << "Digite o código do jogo que deseja comprar: ";
-      cin >> idjogo;
-      biblioteca.comprarJogo(idjogo);
-      break;
+    for (auto& conta : contas) {
+        if (conta.getNome() == nome && conta.validarSenha(senha)) { 
+            return &conta; // Retorna o endereço da conta encontrada
+        }
     }
-    case 2: {
-      biblioteca.listarJogosComprados();
-      break;
-    }
-    case 3: {
-      double valorDeposito;
-      cout << "Digite o valor que deseja depositar: R$";
-      cin >> valorDeposito;
-      biblioteca.depositarSaldo(valorDeposito);
-      break;
-    }
-    case 4: {
-      return;
-    }
-    default:
-      biblioteca.mensagemColorida("Opção inválida. Tente novamente.",
-                                  corVermelha);
-    }
-  }
+    cout << "Nome de usuario ou senha incorretos." << endl;
+    return nullptr; // Se a conta não for encontrada
 }
 
-int MenuLogin() {
-  BibliotecaJogos biblioteca;
 
-  string usuario, senha;
-
-  while (true) {
-    cout << "\n";
-    imprimirMoldura(50);
-
-    cout << "\033[1;33m▉\033[0m\033[1;36m ▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ Menu Principal "
-            "▰▰▰▰▰▰▰▰▰▰▰▰▰▰ \033[0m\033[1;33m▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 1.\033[0m Listar "
-            "Jogos\033[1;33m\t\t\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 2.\033[0m Fazer "
-            "Login\033[1;33m\t\t\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 3.\033[0m Criar "
-            "Conta\033[1;33m\t\t\t\t\t\t\t\t ▉\033[0m\n"
-         << "\033[1;33m▉\033[0m\033[1;33m 4.\033[0m "
-            "Sair\033[1;33m\t\t\t\t\t\t\t\t\t\t ▉\033[0m\n";
-
-    imprimirMoldura(50);
-
-    int opcao;
-    cout << "\n\033[1;37mEscolha uma opção: \033[0m";
-    cin >> opcao;
-
-    switch (opcao) {
-    case 1: {
-      biblioteca.listarJogosDisponiveis();
-      break;
+void mostrarJogosDisponiveis(const vector<Jogo>& jogosDisponiveis) {// acessa o vetor jogo e define como jogosDisponiveis
+    cout << "\nJogos Disponiveis:" << endl;
+    for (const auto& jogo : jogosDisponiveis) {
+        cout << "ID: " << jogo.getId() << " - Nome: " << jogo.getNome() << " - Preco: R$" << jogo.getPreco() << endl; // usa os gets la encimas
     }
-    case 2: {
-      usuario = "";
-      senha = "";
-      cout << "Digite seu usuário: ";
-      cin >> usuario;
-      cout << "Digite sua senha: ";
-      cin >> senha;
-      biblioteca.fazerLogin(usuario, senha);
-      break;
-    }
-    case 3: {
-      usuario = "";
-      senha = "";
-      cout << "Digite o novo usuário: ";
-      cin >> usuario;
-      cout << "Digite a nova senha: ";
-      cin >> senha;
-      biblioteca.cadastrarUsuario(usuario, senha);
-      break;
-    }
-    case 4: {
-      cout << "Saindo. Até mais!" << endl;
-      return 0;
-    }
-    default:
-      biblioteca.mensagemColorida("Opção inválida. Tente novamente.",
-                                  corVermelha);
-    }
-
-    if (biblioteca.usuarioLogado.nome != "") {
-      menuComprarJogo(biblioteca, usuario);
-    }
-  }
 }
+
+void depositar(Conta* conta) { // ta pegando o ponteiro da conta passada
+    double valor;
+    cout << "Digite o valor a ser depositado: R$";
+    cin >> valor;
+
+    conta->depositar(valor);
+}
+
+void comprar(Conta* conta, const vector<Jogo>& jogosDisponiveis) { //pega o ponteiro da conta passada e passa o vetor de jogo como jogosdisponiveis
+    int idJogo;
+    cout << "Digite o ID do jogo que deseja comprar: ";
+    cin >> idJogo;
+
+    for (auto& jogo : jogosDisponiveis) {
+        if (jogo.getId() == idJogo) {
+            if (conta->getSaldo() >= jogo.getPreco()) {
+                conta->debitar(jogo.getPreco());
+                cout << "Produto comprado com sucesso!" << endl;
+                cout << "Jogo comprado: " << jogo.getNome() << endl;
+                cout << "Saldo restante: R$" << conta->getSaldo() << endl;
+                return;
+            } else {
+                cout << "Saldo insuficiente para comprar o produto." << endl;
+                return;
+            }
+        }
+    }
+    cout << "Jogo não encontrado." << endl;
+}
+
+void mostrarSaldo(Conta* conta) { //mostra o saldo
+    cout << "Seu saldo atual é: R$" << conta->getSaldo() << endl;
+}
+
 
 int main() {
-  BibliotecaJogos biblioteca;
-  biblioteca.carregarUsuarios();
-  MenuLogin();
+    vector<Conta> contas;
+    vector<Jogo> jogosDisponiveis = {
+        Jogo(1, "The Witcher 3", 199.99),
+        Jogo(2, "Cyberpunk 2077", 207.70),
+        Jogo(3, "Assassin's Creed Valhalla", 299.99)
+    };
+
+    bool executando = true;
+    Conta* contaLogada = nullptr; // define o ponteiro como null
+
+    while (executando) {
+        cout << "\n1. Criar conta\n2. Fazer login\n3. Depositar\n4. Comprar\n5. Mostrar Jogos Disponiveis\n6. Mostrar Saldo\n7. Sair\n" << endl; // menu
+        int opcao;
+        cout << "Digite a opcao desejada: ";
+        cin >> opcao;
+
+        switch (opcao) {
+            case 1:
+                cadastrarConta(contas); // chama o cadastrarconta e passa o contas
+                break;
+            case 2:
+                contaLogada = fazerLogin(contas); // passa para conta logada o return da função fazerlogin
+                if (contaLogada != nullptr) {
+                    cout << "Login bem-sucedido!" << endl;
+                } else {
+                    cout << "Nome de usuario ou senha incorretos." << endl;
+                }
+                break;
+              case 3:        
+                if (contaLogada != nullptr) { //passa o ponteiro nulo
+                    depositar(contaLogada); // chama a função depositar
+                } else {
+                    cout << "Faça login primeiro." << endl;
+                }
+                break;
+            case 4:
+                if (contaLogada != nullptr) { //passa o ponteiro nulo
+                    comprar(contaLogada, jogosDisponiveis); // chamada de função
+                } else {
+                    cout << "Faça login primeiro." << endl;
+                }
+                break;
+            case 5:
+                mostrarJogosDisponiveis(jogosDisponiveis); //mostra jogos disponiveis
+                break;
+            case 6:
+                if (contaLogada != nullptr) {
+                  mostrarSaldo(contaLogada);//mostrar saldo e passa a conta logada
+                } else {
+                  cout << "Faça login primeiro." << endl;
+                }
+                break;
+            case 7:
+                executando = false;
+                break;
+            default:
+                cout << "Opcao invalida!" << endl;
+        }
+    }
+
+    return 0;
 }
--->
