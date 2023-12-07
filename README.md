@@ -6,7 +6,7 @@ Este código implementa um sistema simples de biblioteca de jogos, onde os usuá
 
 ## Diagrama de Classes
 
-<!--
+
 plaintext
 +-----------------+          +------------------+
 |   Jogo          |          |    Usuario       |
