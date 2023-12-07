@@ -6,6 +6,92 @@ Este código implementa um sistema simples de biblioteca de jogos, onde os usuá
 
 ## Diagrama de Classes
 
+<--
++-----------------+          +------------------+
+|      Jogo       |          |     Usuario      |
++-----------------+          +------------------+
+| int id_jogo     |          | string nome      |
+| string nome     |          | string senha     |
+| double preco    |          | vector<Jogo> jogosComprados |
++-----------------+          | double saldo     |
+                             +------------------+
+                             |                  |
+                             +------------------+
+                             |
+                             | +------------------------+
+                             | |  BibliotecaJogos       |
+                             | +------------------------+
+                             | | vector<Jogo> jogosDisponiveis |
+                             | | Usuario usuarioLogado          |
+                             | +-----------------------------+
+                             | | void mensagemColorida(...)    |
+                             | | void listarJogosDisponiveis() |
+                             | | void fazerLogin(...)           |
+                             | | void cadastrarUsuario(...)     |
+                             | | void comprarJogo(...)          |
+                             | | void listarJogosComprados()    |
+                             | | void depositarSaldo(...)      |
+                             | +-----------------------------+
+-->
+
+# Jogo & Usuario
+
+## Jogo
+- `int id_jogo`
+- `string nome`
+- `double preco`
+
+## Usuario
+- `string nome`
+- `string senha`
+- `vector<Jogo> jogosComprados`
+- `double saldo`
+
+# BibliotecaJogos
+
+- `vector<Jogo> jogosDisponiveis`
+- `Usuario usuarioLogado`
+
+## Métodos
+
+- `void mensagemColorida(...)`
+- `void listarJogosDisponiveis()`
+- `void fazerLogin(...)`
+- `void cadastrarUsuario(...)`
+- `void comprarJogo(...)`
+- `void listarJogosComprados()`
+- `void depositarSaldo(...)`
+
+
+# Jogo & Usuario
+
+## Jogo
+- `int id_jogo`
+- `string nome`
+- `double preco`
+
+## Usuario
+- `string nome`
+- `string senha`
+- `vector<Jogo> jogosComprados`
+- `double saldo`
+
+# BibliotecaJogos
+
+- `vector<Jogo> jogosDisponiveis`
+- `Usuario usuarioLogado`
+
+## Métodos
+
+- `void mensagemColorida(...)`
+- `void listarJogosDisponiveis()`
+- `void fazerLogin(...)`
+- `void cadastrarUsuario(...)`
+- `void comprarJogo(...)`
+- `void listarJogosComprados()`
+- `void depositarSaldo(...)`
+
+
 # Jogo & Usuario
 
 ## Jogo
