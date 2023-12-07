@@ -6,10 +6,8 @@ Este código implementa um sistema simples de biblioteca de jogos, onde os usuá
 
 ## Diagrama de Classes
 
-<!--
-plaintext
 +-----------------+          +------------------+
-|   Jogo          |          |    Usuario       |
+|      Jogo       |          |     Usuario      |
 +-----------------+          +------------------+
 | int id_jogo     |          | string nome      |
 | string nome     |          | string senha     |
@@ -19,21 +17,21 @@ plaintext
                              |                  |
                              +------------------+
                              |
-                             |         +------------------------+
-                             +-------->| BibliotecaJogos        |
-                             |         +------------------------+
-                             |         | vector<Jogo> jogosDisponiveis |
-                             |         | Usuario usuarioLogado          |
-                             |         +-----------------------------+
-                             |         | void mensagemColorida(...)    |
-                             |         | void listarJogosDisponiveis() |
-                             |         | void fazerLogin(...)           |
-                             |         | void cadastrarUsuario(...)     |
-                             |         | void comprarJogo(...)          |
-                             |         | void listarJogosComprados()    |
-                             |         | void depositarSaldo(...)      |
-                             +-------->|                             |
-                                       +-----------------------------+
+                             | +------------------------+
+                             | |  BibliotecaJogos       |
+                             | +------------------------+
+                             | | vector<Jogo> jogosDisponiveis |
+                             | | Usuario usuarioLogado          |
+                             | +-----------------------------+
+                             | | void mensagemColorida(...)    |
+                             | | void listarJogosDisponiveis() |
+                             | | void fazerLogin(...)           |
+                             | | void cadastrarUsuario(...)     |
+                             | | void comprarJogo(...)          |
+                             | | void listarJogosComprados()    |
+                             | | void depositarSaldo(...)      |
+                             | +-----------------------------+
+
 
 
 ## Descrição dos Objetos e Métodos
