@@ -6,7 +6,7 @@ Este código implementa um sistema simples de biblioteca de jogos, onde os usuá
 
 ## Diagrama de Classes
 
-<--
+<!--
 +-----------------+          +------------------+
 |      Jogo       |          |     Usuario      |
 +-----------------+          +------------------+
@@ -32,7 +32,7 @@ Este código implementa um sistema simples de biblioteca de jogos, onde os usuá
                              | | void listarJogosComprados()    |
                              | | void depositarSaldo(...)      |
                              | +-----------------------------+
--->
+--!>
 
 # Jogo & Usuario
 
