@@ -2,89 +2,81 @@
 
 ## Introdução
 
-Este código implementa um sistema simples de biblioteca de jogos, onde os usuários podem visualizar jogos disponíveis, fazer login, cadastrar novos usuários, comprar jogos, depositar saldo e visualizar a lista de jogos comprados. O programa é desenvolvido em C++ e utiliza ANSI escape codes para adicionar cores ao texto no terminal.
+Este código implementa um sistema simples de compra de jogos, onde os usuários podem criar contas, fazer login, depositar saldo, comprar jogos, visualizar jogos disponíveis, visualizar o saldo e sair do programa. O programa é desenvolvido em C++ e utiliza classes para representar jogos e contas de usuários.
 
 ## Diagrama de Classes
 
 ```plaintext
-+-----------------+          +------------------+
-|   Jogo          |          |    Usuario       |
-+-----------------+          +------------------+
-| int id_jogo     |          | string nome      |
-| string nome     |          | string senha     |
-| double preco    |          | vector<Jogo> jogosComprados |
-+-----------------+          | double saldo     |
-                             +------------------+
-                             |                  |
-                             +------------------+
-                             |
-                             |         +------------------------+
-                             +-------->| BibliotecaJogos        |
-                             |         +------------------------+
-                             |         | vector<Jogo> jogosDisponiveis |
-                             |         | Usuario usuarioLogado          |
-                             |         +-----------------------------+
-                             |         | void mensagemColorida(...)    |
-                             |         | void listarJogosDisponiveis() |
-                             |         | void fazerLogin(...)           |
-                             |         | void cadastrarUsuario(...)     |
-                             |         | void comprarJogo(...)          |
-                             |         | void listarJogosComprados()    |
-                             |         | void depositarSaldo(...)      |
-                             +-------->|                             |
-                                       +-----------------------------+
++---------------------+     +---------------------+
+|        Jogo         |     |        Conta        |
++---------------------+     +---------------------+
+| - int id_jogo       |     | - string nome       |
+| - string nome       |     | - string senha      |
+| - double preco      |     | - double saldo      |
+| + getId() const     |     | + getNome() const   |
+| + getNome() const   |     | + validarSenha(...) |
+| + getPreco() const  |     | + depositar(...)    |
++---------------------+     | + getSaldo() const  |
+                            | + debitar(...)      |
+                            +---------------------+
 ```
 
 ## Descrição dos Objetos e Métodos
 
 ### Classe `Jogo`
 
-Representa um jogo disponível na biblioteca.
+Representa um jogo disponível para compra.
 
 #### Atributos:
 - `int id_jogo`: Identificador único do jogo.
 - `string nome`: Nome do jogo.
 - `double preco`: Preço do jogo.
 
-### Classe `Usuario`
+#### Métodos Públicos:
+- `int getId() const`: Retorna o identificador do jogo.
+- `string getNome() const`: Retorna o nome do jogo.
+- `double getPreco() const`: Retorna o preço do jogo.
 
-Representa um usuário no sistema.
+### Classe `Conta`
+
+Representa a conta de um usuário no sistema.
 
 #### Atributos:
 - `string nome`: Nome do usuário.
 - `string senha`: Senha do usuário.
-- `vector<Jogo> jogosComprados`: Lista dos jogos comprados pelo usuário.
-- `double saldo`: Saldo disponível na conta do usuário.
-
-### Classe `BibliotecaJogos`
-
-Representa a biblioteca de jogos e controla as operações disponíveis.
-
-#### Atributos:
-- `vector<Jogo> jogosDisponiveis`: Lista dos jogos disponíveis na biblioteca.
-- `Usuario usuarioLogado`: Usuário que está atualmente logado no sistema.
+- `double saldo`: Saldo disponível na conta.
 
 #### Métodos Públicos:
-- `void mensagemColorida(const string &mensagem, const string &cor) const`: Exibe uma mensagem colorida no terminal.
-- `void listarJogosDisponiveis() const`: Lista os jogos disponíveis.
-- `void fazerLogin(const string &usuario, const string &senha)`: Realiza o login de um usuário.
-- `void cadastrarUsuario(const string &usuario, const string &senha)`: Cadastra um novo usuário.
-- `void comprarJogo(const int &idjogo)`: Permite que o usuário compre um jogo.
-- `void listarJogosComprados() const`: Lista os jogos comprados pelo usuário.
-- `void depositarSaldo(double valor)`: Adiciona saldo à conta do usuário.
+- `string getNome() const`: Retorna o nome do usuário.
+- `bool validarSenha(const string& _senha) const`: Valida a senha do usuário.
+- `void depositar(double valor)`: Adiciona saldo à conta.
+- `double getSaldo() const`: Retorna o saldo disponível na conta.
+- `void debitar(double valor)`: Debita um valor do saldo da conta.
 
-### Função `imprimirMoldura(int largura)`
+### Função `cadastrarConta(vector<Conta>& contas)`
 
-Imprime uma moldura no terminal com a largura especificada.
+Solicita informações do usuário para criar uma nova conta e a adiciona ao vetor de contas.
 
-### Função `menuComprarJogo(BibliotecaJogos &biblioteca, string &usuario)`
+### Função `fazerLogin(vector<Conta>& contas)`
 
-Implementa o menu de compras, permitindo que o usuário compre jogos, liste jogos comprados e deposite saldo.
+Solicita informações do usuário para realizar o login e retorna o endereço da conta logada ou `nullptr` se o login falhar.
 
-### Função `MenuLogin()`
+### Função `mostrarJogosDisponiveis(const vector<Jogo>& jogosDisponiveis)`
 
-Implementa o menu principal, permitindo que o usuário liste jogos, faça login, crie uma conta ou saia do programa.
+Exibe no console a lista de jogos disponíveis.
+
+### Função `depositar(Conta* conta)`
+
+Solicita o valor a ser depositado e realiza o depósito na conta fornecida.
+
+### Função `comprar(Conta* conta, const vector<Jogo>& jogosDisponiveis)`
+
+Permite que o usuário compre um jogo disponível, debitando o valor do saldo.
+
+### Função `mostrarSaldo(Conta* conta)`
+
+Exibe no console o saldo atual da conta.
 
 ### Função `main()`
 
-Inicia o programa chamando a função `MenuLogin()`.
+Inicia o programa, oferecendo opções ao usuário para criar conta, fazer login, depositar, comprar jogos, visualizar jogos disponíveis, visualizar o saldo e sair do programa.
